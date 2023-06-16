@@ -9,7 +9,7 @@ st.set_page_config(page_title="Organized Crime", page_icon="😵‍💫", layout
 def get_data_from_csv():
     df = pd.read_excel('Police_Department_Incident_Reports__2018_to_Present.xlsx')
     df = df.replace({"": "None"})
-    df = df.rename(columns={'Incident Year': 'Incident_Year', 'Incident Day of Week': 'Incident_Day_of_Week', 'Analysis Neighborhood': 'Analysis_Neighborhood', 'Incident ID': 'Incident_ID', 'Incident Subcategory': 'Incident_SubCategory', 'Incident Time': 'Incident_Time','Incident Number': 'Incident_Numbers'})
+    df = df.rename(columns={'Incident Year': 'Incident_Year', 'Incident Day of Week': 'Incident_Day_of_Week', 'Analysis Neighborhood': 'Analysis_Neighborhood', 'Incident ID': 'Incident_ID', 'Incident Subcategory': 'Incident_SubCategory', 'Incident Time': 'Incident_Time','Incident Number': 'Incident_Numbers', 'Incident Date': 'Incident_Date'})
     #st.dataframe(df)
 
     # Add "hour" column to dataframe.
@@ -107,7 +107,7 @@ hide_st_style = """
 st.markdown(hide_st_style, unsafe_allow_html=True)
 
 # Combinar las columnas de incidentes en una sola columna
-df['Incidente'] = df[['Incident Category', 'Incident Date', 'Number of Incidents']].astype(str).apply(lambda x: ', '.join(x.dropna()), axis=1)
+df['Incidente'] = df[['Incident_Category', 'Incident_Date', 'Incident_ID']].astype(str).apply(lambda x: ', '.join(x.dropna()), axis=1)
 
 # Configurar la clave de acceso de Mapbox
 px.set_mapbox_access_token('pk.eyJ1IjoiZW5yaXF1ZW1vbnNpMTkiLCJhIjoiY2xpeHkwdGRvMGFtMTNlbzgxNzE3MjZ5dSJ9.63FyiBhM_U3Gu5B78rbmWg')
