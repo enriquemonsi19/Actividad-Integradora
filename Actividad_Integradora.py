@@ -4,7 +4,7 @@
 
 import pandas as pd
 import streamlit as st
-#import plotly.express as px
+import plotly.express as px
 import statistics
 
 st.set_page_config(page_title="Crime Overview", page_icon=":warning:", layout="wide")
@@ -125,6 +125,27 @@ hide_st_style = """
 
 st.markdown(hide_st_style, unsafe_allow_html=True)
 
-left_column, right_column = st.columns(3)
-left_column.plotly_chart(fig_incidents_by_category, use_container_width=True)
-right_column.plotly_chart(fig_hourly_incident, use_container_width=True)
+# Combinar las columnas de incidentes en una sola columna
+df['Incidente'] = df[['Incident Subcategory', 'Report Datetime', 'Incident Number']].astype(str).apply(lambda x: ', '.join(x.dropna()), axis=1)
+
+# Configurar la clave de acceso de Mapbox
+px.set_mapbox_access_token('pk.eyJ1IjoiZW5yaXF1ZW1vbnNpMTkiLCJhIjoiY2xpeHkwdGRvMGFtMTNlbzgxNzE3MjZ5dSJ9.63FyiBhM_U3Gu5B78rbmWg')
+
+# Crear el gráfico interactivo
+fig = px.scatter_mapbox(df, lat='Latitude', lon='Longitude', hover_name='Incidente', hover_data=['Incidente'],
+                        zoom=10, height=500)
+
+# Configurar el diseño del mapa y mostrarlo
+#fig.update_layout(mapbox_style="mapbox://styles/mapbox/streets-v11")
+#fig.update_layout(mapbox_style="mapbox://styles/mapbox/light-v10")
+#fig.update_layout(mapbox_style="mapbox://styles/mapbox/dark-v10")
+#fig.update_layout(mapbox_style="mapbox://styles/mapbox/satellite-v9")
+#fig.update_layout(mapbox_style="mapbox://styles/mapbox/satellite-streets-v11")
+#fig.update_layout(mapbox_style="mapbox://styles/mapbox/outdoors-v11")
+fig.update_layout(mapbox_style="open-street-map")
+fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
+
+left_column, middle_column, right_column = st.columns(3)
+left_column.plotly_chart(fig_hourly_incident, use_container_width=True)
+middle_column.plotly_chart(fig_incidents_by_category, use_container_width=True)
+right_column.plotly_chart(fig, use_container_width=True)
