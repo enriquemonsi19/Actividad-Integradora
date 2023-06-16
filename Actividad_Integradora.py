@@ -3,7 +3,7 @@ import streamlit as st
 import plotly.express as px
 import statistics
 
-st.set_page_config(page_title="Crime Overview", page_icon=":warning:", layout="wide")
+st.set_page_config(page_title="Crime in San Francisco", page_icon=":ghost:", layout="wide")
 
 @st.cache
 def get_data_from_csv():
@@ -20,7 +20,7 @@ df = get_data_from_csv()
 
 #--SideBar--
 
-st.sidebar.header("Please Filter Here:")
+st.sidebar.header("Filters:")
 year = st.sidebar.multiselect(
     "Select the Year:",
     options=df["Incident_Year"].unique(),
@@ -68,7 +68,6 @@ with right_column:
 
 st.markdown("---")
 
-#Gracias.
 
 # Number Incidents by Incident Category.
 
@@ -93,22 +92,7 @@ fig_incidents_by_category.update_layout(
 
 
 # Incident by Hour [Bar Chart]
-'''
-incident_by_hour = df_selection.groupby(by=["Hour"]).sum()[["Incident_ID"]]
-fig_hourly_incident = px.bar(
-    incident_by_hour,
-    x = incident_by_hour.index,
-    y = "Incident_ID",
-    title="<b>Incidents by hour<b>",
-    color_discrete_sequence=["#008388"] * len(incident_by_hour),
-    template="plotly_white",
-)
-fig_hourly_incident.update_layout(
-    xaxis=dict(tickmode="linear"),
-    plot_bgcolor="rgba(0,0,0,0)",
-    yaxis=(dict(showgrid=False)),
-)
-'''
+
 # --- Hide Streamlit Style ---
 
 hide_st_style = """
