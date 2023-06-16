@@ -11,14 +11,10 @@ def get_data_from_csv():
     df = df.replace({"": "None"})
     df = df.rename(columns={'Incident Year': 'Incident_Year', 'Incident Day of Week': 'Incident_Day_of_Week', 'Analysis Neighborhood': 'Analysis_Neighborhood', 'Incident ID': 'Incident_ID', 'Incident Category': 'Incident_Category', 'Incident Time': 'Incident_Time'})
     #st.dataframe(df)
-
-    # Add "hour" column to dataframe.
-
-    #df["Hour"] = pd.to_datetime(df["Incident_Time"], format="%H:%M").dt.hour
     return df
 df = get_data_from_csv()
 
-#--SideBar--
+
 
 st.sidebar.header("Filters:")
 year = st.sidebar.multiselect(
@@ -43,17 +39,17 @@ df_selection = df.query(
     "Incident_Year == @year & Incident_Day_of_Week == @day_week & Analysis_Neighborhood == @neighborhood"
 )
 
-#st.dataframe(df_selection)
 
-# ----- MAINPAGE -----
+
+
 st.title(":bar_chart: Crime Dashboard")
 st.markdown("##")
 
-# TOP KPI's
+
 
 incidents = int(df_selection["Incident_ID"].count())
 incident_day = statistics.mode(df_selection['Incident_Day_of_Week'])
-#incident_time = statistics.mode(df_selection['Incident_Time'])
+
 
 left_column, right_column = st.columns(2)
 with left_column:
@@ -69,7 +65,7 @@ with right_column:
 st.markdown("---")
 
 
-# Number Incidents by Incident Category.
+
 
 incidents_by_incident_category = (
     df_selection.groupby(by=["Incident_Category"]).count()[["Incident_ID"]].sort_values(by="Incident_ID")
@@ -91,9 +87,8 @@ fig_incidents_by_category.update_layout(
 
 
 
-# Incident by Hour [Bar Chart]
 
-# --- Hide Streamlit Style ---
+
 
 hide_st_style = """
                 <style>
@@ -105,10 +100,10 @@ hide_st_style = """
 
 st.markdown(hide_st_style, unsafe_allow_html=True)
 
-# Combinar las columnas de incidentes en una sola columna
+
 df['Incidente'] = df[['Incident Subcategory', 'Incident Date', 'Incident Number']].astype(str).apply(lambda x: ', '.join(x.dropna()), axis=1)
 
-# Crear el gráfico interactivo
+
 fig = px.scatter_mapbox(df, lat='Latitude', lon='Longitude', hover_name='Incidente', hover_data=['Incidente'],
                         zoom=10, height=500)
 
@@ -117,5 +112,4 @@ fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
 
 left_column, right_column = st.columns(2)
 left_column.plotly_chart(fig_incidents_by_category, use_container_width=True)
-#middle_column.plotly_chart(fig_incidents_by_category, use_container_width=True)
 right_column.plotly_chart(fig, use_container_width=True)
